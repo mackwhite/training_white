@@ -1,0 +1,158 @@
+---
+title: "Cleaning and Wrangling Data"
+format: html
+---
+
+# Cleaning & Wrangling Data
+
+## Setup
+
+```{r}
+
+#| warning: false
+#| message: false
+
+library(dplyr)
+library(tidyr)
+library(readr)
+```
+
+## Read Data
+
+```{r}
+catch_original <- read_csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1")
+```
+
+## Explore Data
+
+```{r}
+
+#| echo: false
+#| eval: false
+
+colnames(catch_original)
+
+summary(catch_original)
+
+glimpse(catch_original)
+
+head(catch_original)
+
+unique(catch_original$Region)
+```
+
+## Using `select()` to remove or select columns
+```{r}
+catch_data <- catch_original %>% 
+  select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum) 
+
+catch_data1 <- catch_original %>% 
+  select(-All, -notesRegCode) #same as above, but simpler bc only removing small # of columns
+```
+
+## Quality Check
+```{r}
+glimpse(catch_data) #see that Chinook data is character, not numeric - why?
+```
+
+## Override Chinook column using `mutate()`
+```{r}
+catch_clean <- catch_data %>% 
+  mutate(Chinook = as.numeric(Chinook)) #warning shows that we are losing data
+```
+
+```{r}
+i <- which(is.na(catch_clean$Chinook)) #looks into chinook column of catch clean and tell me which columns are NA
+
+i
+
+catch_data[i,] #look inside data and give me the "i" row - comma and then nothing means all of the columns - can see that Chinook has an I there instead of a 1... that's the issue!
+```
+
+```{r}
+catch_clean <- catch_data %>% 
+  mutate(Chinook = if_else(condition = Chinook == "I",
+                           true = "1",
+                           false = Chinook),
+         Chinook = as.numeric(Chinook)) #if column Chinook is equal to I, then change to 1, if not then keep the same - also, make sure to change everything to numeric
+glimpse(catch_clean)
+```
+
+## Reshaping DF with `pivot_longer()` and `pivot_wider()`
+
+```{r}
+catch_long <- catch_clean %>% 
+  pivot_longer(cols = -c(Region, Year),
+               names_to = "species",
+               values_to = "catch") #takes column names and makes them a species and their values to a new column as catch
+
+head(catch_long)
+```
+
+## Using `rename()` to rename columns in data frame
+
+```{r}
+catch_long <- catch_long %>% 
+  rename(catch_thousand = catch) #renaming to catch_thousand bc data are in the thousands start with new name and then relate to old column name
+```
+
+## Using `mutate()` to add a new column
+```{r}
+catch_long <- catch_long %>% 
+  mutate(catch = catch_thousand*1000) %>% #calculating catch based on the fact this is the thousands
+  select(-catch_thousand) #removing catch_thousand and keeping catch bc it is indicative of true catch
+
+head(catch_long)
+```
+
+## Split-Apply-Combine
+```{r}
+mean_region <- catch_long %>% 
+  group_by(Region) %>% #for each region
+  summarise(mean_catch = mean(catch)) # find the mean catch value - ps I messed up the calculation somewhere along the way
+
+head(mean_region)
+
+n_region <- catch_long %>% 
+  group_by(Region) %>% #for each region
+  summarise(n = n()) #count the # of observations
+
+head(n_region)
+```
+
+## Using `filter()` 
+```{r}
+sse_catch <- catch_long %>% 
+  filter(Region == "SSE") # filters by row.. this is saying, look at column region and give back everything equal (i.e., "==") to SSE
+
+head(sse_catch)
+
+sse_nse_catch <- catch_long %>% 
+  filter(Region %in% c("SSE","NSE")) # using "%in%" and concatenate function (i.e., c()), you can filter for multiple things at once
+
+# the "%in%" operator can be thought of reading as "contains"
+
+unique(sse_nse_catch$Region) #"[1] "SSE" "NSE""
+
+```
+
+## Bringing it all together
+```{r}
+catch_original <- read_csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", 
+                               method = "libcurl"))
+
+mean_region <- catch_original %>%
+  select(-All, -notesRegCode) %>% 
+  mutate(Chinook = ifelse(Chinook == "I", 1, Chinook)) %>% 
+  mutate(Chinook = as.numeric(Chinook)) %>% 
+  pivot_longer(-c(Region, Year), 
+               names_to = "species", 
+               values_to = "catch") %>%
+  mutate(catch = catch*1000) %>% 
+  group_by(Region) %>% 
+  summarize(mean_catch = mean(catch)) %>% 
+  arrange(desc(mean_catch))
+
+head(mean_region)
+```
+
