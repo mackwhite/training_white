@@ -1,0 +1,52 @@
+---
+title: "Intro to Quarto"
+format: html
+bibliography: references.bib
+---
+
+# Header 1
+
+I'm going to **bold this text**
+
+I'm going to *italicize this text*
+
+I'm going to maybe ***bold and italicize this text***
+
+I am going to make a list of working group members below:
+
+1.  [Fish](https://myweb.fiu.edu/rehagej/)
+2.  Cat
+3.  Dog
+
+A friend once said:
+
+> It's always better to give than to receive^2^.
+
+## Header 2
+
+### Header 3
+
+#### Header 4
+
+This is a very important fact [@oke2020]
+
+| Col1      | Col2   | Col3 |
+|-----------|--------|------|
+| element 1 | la     |      |
+| element 2 | lala   |      |
+| element 3 | lalala |      |
+
+
+## Code Chunks
+
+```{r}
+#| echo: false
+
+x <- 4*8
+
+high_vec <- c(5.2, 6.0, 5.7)
+
+x
+
+high_vec
+```

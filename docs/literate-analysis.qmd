@@ -1,0 +1,71 @@
+---
+title: "Mini Literate Analysis"
+author: "Mack White"
+format: html
+---
+
+## Introduction
+
+### About this data
+
+This [data set](https://arcticdata.io/catalog/view/doi:10.18739/A25T3FZ8X) includes diverse measurements of seawater chemistry along with supporting conductivity, temperature, and depth (CTD) data from the Arctic Ocean near the North Pole. Measurements were taken from sea ice platforms each April or May from 2000-2014.
+
+### Setup
+
+```{r}
+library(readr)
+library(here) #awesome package for quarto and rmarkdown - here function in package sets the default file path - see example below, sets to the base of the directory - really great for reproducibility... file paths differ, sets up in the same exact place for you and others however whenever use the "here" package
+# important to have packages listed in terms of reproducibility
+library(tidyverse)
+```
+
+
+### Read data
+```{r}
+bg_chem <- read_csv(here("data/BGchem2008data.csv"))
+```
+
+Exploring our data
+```{r}
+#| eval: false
+
+colnames(bg_chem)
+str(bg_chem)
+glimpse(bg_chem)
+summary(bg_chem)
+unique(bg_chem$Date)
+```
+
+## Analysis
+
+### Calculate summary statistics
+
+```{r}
+nitrate <- mean(bg_chem$NO3)
+nitrite <- mean(bg_chem$NO2)
+amm <- mean(bg_chem$NH4)
+pho <- mean(bg_chem$P)
+```
+
+### Calculate mean Redfield ratio
+
+```{r}
+ratio <- (nitrate + nitrite + amm / pho)
+```
+
+### Plot Ratio
+
+```{r}
+plot(bg_chem$P, bg_chem$NO2 + bg_chem$NO3 + bg_chem$NH4)
+```
+
+## Conclusion
+
+The Redfield ratio of this data is `r round(ratio)` 
+
+```{r}
+# the 'r ' is really cool because it allows to be reproduced at later date if dataset is updated and will automatically - if you don't want perfectly round number, can set the # of digits - see ?round() for help. For example, the line above was produced as "The Redfield ratio of this data is `r round(ratio)` "
+
+#rendering frequently allows you to make sure it is reproducible, as does clearing env often
+```
+
