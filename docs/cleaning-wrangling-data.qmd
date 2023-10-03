@@ -8,9 +8,10 @@ format: html
 ## Setup
 
 ```{r}
-
 #| warning: false
 #| message: false
+
+# make sure code chunk options are immediately below the beginning of code chunk line
 
 library(dplyr)
 library(tidyr)
@@ -26,7 +27,6 @@ catch_original <- read_csv("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/d
 ## Explore Data
 
 ```{r}
-
 #| echo: false
 #| eval: false
 
