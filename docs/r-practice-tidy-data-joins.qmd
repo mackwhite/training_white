@@ -3,6 +3,8 @@ title: "R Practice: Tidy Data and Joins"
 format: html
 ---
 
+# Exercise: Practice Joins
+
 ## Setup
 ```{r}
 library(readr)
@@ -38,6 +40,176 @@ summary(taxalist)
 
 ```
 
+## What are the primary and foreign keys for the tables bird_observations and taxalist?
+### Recall that a **primary key** is a unique identifier for each observed entity, one per row. And a **foreign key** references to a primary key in another table (**linkage**).
+### **HINT**: First identify the primary keys for all the tables, then identify the foreign keys.
+```{r}
+head(bird_observations)
+head(taxalist)
+```
 
+### Primary Keys: Taxa List = Species ID, Bird Observations = ***Compound Key*** made up of "Survey ID", "Site ID", & "Species ID" 
+### Foreign Keys: Taxa List = NA, Bird Observations = Species ID
 
+## Write code to create a subset of bird_observations called birds_subset that only contains observations for birds with species id BHCO and RWBL, and from sites with site ID LI-W and NU-C.
+### **HINT**: What function do you use to subset data by rows?
+
+```{r}
+# glimpse(bird_observations)
+# unique(bird_observations$species_id)
+# unique(bird_observations$site_id)
+
+birds_subset <- bird_observations %>% 
+  filter(species_id %in% c("BHCO", "RWBL"),
+         site_id %in% c("LI-W", "NU-C"))
+
+unique(birds_subset$species_id) #looks good
+unique(birds_subset$site_id) #looks good
+```
+
+## First, answer: what do you expect a `left_join()` between birds_subset and sites to contain? Write this in your Quarto Document or tell a neighbor.
+
+```{r}
+colnames(birds_subset) #looking at column names, leading with left table...
+colnames(sites) #looking at column names
+```
+
+### I think that the `left_join()` will result in a new dataframe w/ 15 columns (i.e., join based on site_id column)
+
+```{r}
+# birds_left <- birds_subset %>% 
+#   left_join(birds_subset, sites, by = "site_id") - my first attempt..., which was wrong. See below:
+
+birds_left <- birds_subset %>% 
+  left_join(y = sites, by = "site_id")
+# don't see x = birds_subset here because piping in birds_subset means it automatically assumes birds_subset as x.
+
+# # syntax without pipe
+# birds_left <- left_join(x = birds_subset, y = sites, by = "site_id")
+
+colnames(birds_left)
+```
+
+### my answer was *correct* - eureka!
+
+## First, answer: what do you expect a `full_join()` between birds_subset and sites to contain? Write this in your Quarto Document or tell a neighbor.
+
+### I expect that a `full_join()` will do the same thing as a `left_join()`
+
+```{r}
+colnames(birds_subset) #looking at column names
+colnames(sites) #looking at column names
+
+birds_full <- birds_subset %>% 
+  full_join(y = sites, by = "site_id")
+```
+
+### I was very wrong... a `full_join()` generated a data frame with 242 observations (still 15 variables because I grouped by "site_id") while `left_join()` resulted in data frame with only 23 observations
+
+### Why is this? Well, the `full_join()` kept all the information from sites, where earlier in the document we decided to `filter()` for a subset of sites...
+### The result? We have a ton of NAs in the `full_join()` data frame
+
+## First, answer: what do you expect an `inner_join()` between birds_subset and taxalist to contain? Write this in your Quarto Document or tell a neighbor.
+
+```{r}
+colnames(birds_subset)
+colnames(taxalist)
+```
+
+### Using `inner_join()`, I think I will get a dataframe with one column: "species_id" since it returns matched x rows 
+
+```{r}
+birds_inner <- birds_subset %>% 
+  inner_join(y = taxalist, by = "species_id")
+```
+
+### Wrong again: however, after reading the correct answer, it makes sense...see below:
+### data merge together based on **species_id** and since there is only *BHCO* and *RWBL* in **birds_subset** then I will only retain data related to those two species. I should also expect to see the columns from **taxalist**: *common_name* and *asu_itis* to be merged into the joined table.
+
+## What would you get if instead of `inner_join()` you’d used `left_join()` for this example? Write code for the left join and check.
+
+```{r}
+colnames(birds_subset)
+colnames(taxalist)
+```
+
+### I would expect that we would see a data frame with the same dimensions (i.e., 23 observations of 11 variables), only keeping data from the "y" data frame **taxalist** for the two species subsetted in the **birds_subset** dataframe which are *BHCO* and *RWBL*
+
+```{r}
+birds_left_COMPARE <- birds_subset %>% 
+  left_join(y = taxalist, by = "species_id")
+```
+
+### Maybe I am starting to figure this out? Maybe I was lucky. I was correct here!
+
+## Why does that make sense for this scenario? In what case would you expect the outcome to differ from an `inner_join()`? Write this in your Quarto Document or tell a neighbor.
+
+### You have the same resulting data set regardless of using inner_join() or left_join() to merge bird_subset and taxalist. The reasons for this are:
+#### `inner_join()` keeps only the rows (observations) that have a matching key across both data sets - here, **species_id** is our key, and the only rows that match across both data sets are those where **species_id** equals *BHCO* or *RWBL*
+#### `left_join()` keeps all rows from the left table (in our case, the left table is **birds_subset**) and merges on data with matching keys (**species_id**) on the right (here, the right table is **taxalist**). Because our left data set (birds_subset) only contains species_ids equal to *BHCO* or *RWBL*, only rows with those species will be kept from the right data set (**taxalist**)
+### You’d expect the outcome to differ from an `inner_join()` if **birds_subset** ***contained an observation with a species_id that was not found in taxalist***. If there was an observation of a **species_id** in **birds_subset** that was *not in taxalist*, then that observation would be **kept**, and **NAs** would be assigned to the **common_name** and **asu_itis** columns for that observations
+
+# Exercise: Practice Wrangling & Joining Data
+
+## Starting with your object bird_observations, rename the notes column to bird_obs_notes (so this doesn’t conflict with notes in the surveys table).
+
+```{r}
+bird_observations <- bird_observations %>% 
+  rename(bird_obs_notes = notes)
+```
+
+## Create a subset that contains all observations in the birds_observations data frame,
+## then join the taxalist, sites and surveys tables to it,
+## and finally limit to only columns survey_date, common_name, park_name, bird_count, and observer.
+## **HINT**: What function do you use to subset data by columns? -> `select()`
+
+```{r}
+bird_obs_subset <- bird_observations %>% 
+  full_join(y = taxalist, by = "species_id") %>% 
+  full_join(y = sites, by = "site_id") %>% 
+  full_join(y = surveys, by = c("site_id", "survey_id")) %>%  
+  select(survey_date, common_name, park_name, bird_count, observer)
+glimpse(bird_obs_subset)
+```
+
+## Continuing with **bird_obs_subset**, first use `unique()` to see the different unique values in the column observer. How many observers are there? Which value is unlike the others?
+
+```{r}
+unique(bird_obs_subset$observer)
+```
+
+### We see that **Josh Burns** sticks out, as well as **NA** - there are **6** observers in total, *maybe 7* if we include the **NA**?
+
+## Replace “Josh Burns” with a format that matches the other observer names. Then use unique() again to check your work.
+## **HINT**: What function do you use when you are making a change to an entire column? -> `mutate()`
+
+```{r}
+bird_obs_subset <- bird_obs_subset %>% 
+  mutate(observer = if_else(condition = observer == "Josh Burns", 
+                            true = "J. Burns", 
+                            false = observer))
+
+unique(bird_obs_subset$observer)
+```
+
+# Bonus: Use a new package lubridate to wrangle the date data and find the total number of birds by park and month
+## **HINT**: How do you learn about a new function or package? -> "?lubridate()"
+
+### Use lubridate::month() to add a new column to bird_obs_subset called survey_month, containing only the month number. Then, convert the month number to a factor (again within mutate()).
+
+### Use dplyr::relocate() to move the new survey_month column to immediately after the survey_date column. You can do this in a separate code chunk, or pipe straight into it from your existing code.
+
+### Filter to only include parks Lindo, Orme, Palomino, and Sonrisa.
+
+### Find the total number of birds observed by park and month (Hint: You can use group_by() and summarize()).
+
+```{r}
+bird_obs_subset <- bird_obs_subset %>% 
+  mutate(survey_month = lubridate::month(survey_date)) %>%  #gives us new month column as number
+  mutate(survey_month = as.factor(survey_month)) %>% # converts month as number to factor
+  dplyr::relocate(survey_month, .after = survey_date) %>% # moves within data fram
+  filter(park_name %in% c("Lindo", "Orme", "Palomino", "Sonrisa")) %>% # includes only subset of parks
+  group_by(park_name, survey_month) %>%  # grouping by park and month
+  summarize(tot_bird_count_month = n()) # to calculate the # of birds observed
+```
 

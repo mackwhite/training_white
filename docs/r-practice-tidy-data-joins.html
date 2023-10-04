@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.269">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>R Practice: Tidy Data and Joins</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="r-practice-tidy-data-joins_files/libs/clipboard/clipboard.min.js"></script>
+<script src="r-practice-tidy-data-joins_files/libs/quarto-html/quarto.js"></script>
+<script src="r-practice-tidy-data-joins_files/libs/quarto-html/popper.min.js"></script>
+<script src="r-practice-tidy-data-joins_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="r-practice-tidy-data-joins_files/libs/quarto-html/anchor.min.js"></script>
+<link href="r-practice-tidy-data-joins_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="r-practice-tidy-data-joins_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="r-practice-tidy-data-joins_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="r-practice-tidy-data-joins_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="r-practice-tidy-data-joins_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">R Practice: Tidy Data and Joins</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="exercise-practice-joins" class="level1">
+<h1>Exercise: Practice Joins</h1>
+<section id="setup" class="level2">
+<h2 class="anchored" data-anchor-id="setup">Setup</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate) <span class="co"># for bonus question</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'lubridate'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Quick question: Do you get a message after loading the libraries? What is it telling you? Talk to your neighbor about it or write a note in your qmd.</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># We do get an error message stating that several functions in base r are masked by lubridate</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="bring-in-data-and-check-out" class="level2">
+<h2 class="anchored" data-anchor-id="bring-in-data-and-check-out">Bring in data and check out</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>bird_observations <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-cap.256.10&amp;entityid=53edaa7a0e083013d9bf20322db1780e"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 40425 Columns: 9
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (5): site_id, species_id, distance, notes, direction
+dbl (4): survey_id, bird_count, seen, heard
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(bird_observations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 40,425
+Columns: 9
+$ survey_id  &lt;dbl&gt; 144, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145, 145,…
+$ site_id    &lt;chr&gt; "LI-S", "LI-W", "LI-W", "LI-W", "LI-W", "LI-W", "LI-W", "LI…
+$ species_id &lt;chr&gt; "HOSP", "HOSP", "AUWA", "RODO", "GTGR", "WCSP", "WCSP", "GT…
+$ distance   &lt;chr&gt; "5-10", "20-40", "20-40", "FT", "&gt;40", "20-40", "20-40", "F…
+$ bird_count &lt;dbl&gt; 4, 10, 2, 2, 2, 3, 3, 2, 2, 3, 1, 10, 3, 1, 6, 6, 20, 12, 2…
+$ notes      &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ seen       &lt;dbl&gt; 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0,…
+$ heard      &lt;dbl&gt; 1, 1, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1,…
+$ direction  &lt;chr&gt; "NE", "E", "SE", "E", "NE", "N", "E", "E", "S", "E", "NE", …</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(bird_observations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   survey_id      site_id           species_id          distance        
+ Min.   :   1   Length:40425       Length:40425       Length:40425      
+ 1st Qu.: 570   Class :character   Class :character   Class :character  
+ Median :1028   Mode  :character   Mode  :character   Mode  :character  
+ Mean   :1043                                                           
+ 3rd Qu.:1550                                                           
+ Max.   :2001                                                           
+                                                                        
+   bird_count          notes                seen            heard       
+ Min.   :   1.000   Length:40425       Min.   :0.0000   Min.   :0.0000  
+ 1st Qu.:   1.000   Class :character   1st Qu.:1.0000   1st Qu.:0.0000  
+ Median :   2.000   Mode  :character   Median :1.0000   Median :0.0000  
+ Mean   :   2.938                      Mean   :0.8463   Mean   :0.4967  
+ 3rd Qu.:   3.000                      3rd Qu.:1.0000   3rd Qu.:1.0000  
+ Max.   :1000.000                      Max.   :1.0000   Max.   :1.0000  
+ NA's   :33                                                             
+  direction        
+ Length:40425      
+ Class :character  
+ Mode  :character  
+                   
+                   
+                   
+                   </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sites <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-cap.256.10&amp;entityid=81bf72420e69077097fb0790dcdc63a6"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 221 Columns: 7
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (5): site_id, park_code, park_district, park_name, point_code
+lgl (2): point_location, park_acreage
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(sites)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 221
+Columns: 7
+$ site_id        &lt;chr&gt; "AT-100", "AT-200", "AT-400", "AT-800", "AT-C", "AT-E",…
+$ park_code      &lt;chr&gt; "AT", "AT", "AT", "AT", "AT", "AT", "AT", "AT", "AT", "…
+$ park_district  &lt;chr&gt; NA, NA, NA, NA, "NE", "NE", "NE", NA, NA, "NE", NA, NA,…
+$ park_name      &lt;chr&gt; "Altadena", "Altadena", "Altadena", "Altadena", "Altade…
+$ point_code     &lt;chr&gt; NA, NA, NA, NA, "C", "E", "N", "NE", "NW", "S", "SE", "…
+$ point_location &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…
+$ park_acreage   &lt;lgl&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sites)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   site_id           park_code         park_district       park_name        
+ Length:221         Length:221         Length:221         Length:221        
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+  point_code        point_location park_acreage  
+ Length:221         Mode:logical   Mode:logical  
+ Class :character   NA's:221       NA's:221      
+ Mode  :character                                </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>surveys <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-cap.256.10&amp;entityid=b2466fa5cb5ed7ee1ea91398fc291c59"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 2004 Columns: 12
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (4): site_id, observer, wind_dir, notes
+dbl  (4): survey_id, wind_speed, air_temp, cloud_cover
+lgl  (1): temp_units
+dttm (3): survey_date, time_start, time_end
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(surveys)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 2,004
+Columns: 12
+$ site_id     &lt;chr&gt; "EA-C", "EA-W", "WR-C", "SO-C", "CG-C", "AT-C", "LO-C", "E…
+$ survey_id   &lt;dbl&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17,…
+$ survey_date &lt;dttm&gt; 2001-01-11, 2001-01-11, 2000-12-08, 2000-12-12, 2000-12-1…
+$ time_start  &lt;dttm&gt; 1899-12-30 11:15:00, 1899-12-30 10:50:00, 1899-12-30 09:4…
+$ time_end    &lt;dttm&gt; 1899-12-30 11:30:00, 1899-12-30 11:05:00, 1899-12-30 09:5…
+$ observer    &lt;chr&gt; "D. Stuart", "D. Stuart", "B. Rambo", "B. Rambo", "B. Ramb…
+$ wind_speed  &lt;dbl&gt; 15, 15, 0, 5, 5, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 15, 5, 0…
+$ wind_dir    &lt;chr&gt; NA, NA, NA, "E", "E", NA, NA, NA, NA, NA, "E", NA, NA, NA,…
+$ air_temp    &lt;dbl&gt; 50, 50, 50, 45, 45, 42, 30, 30, 30, 46, 65, 53, 55, 40, 55…
+$ temp_units  &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FA…
+$ cloud_cover &lt;dbl&gt; 40, 40, 0, 10, 20, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 10, 1…
+$ notes       &lt;chr&gt; "View S blocked by stage.  View E partly blocked by buildi…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(surveys)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   site_id            survey_id       survey_date                    
+ Length:2004        Min.   :   1.0   Min.   :2000-12-01 00:00:00.00  
+ Class :character   1st Qu.: 502.8   1st Qu.:2001-04-05 00:00:00.00  
+ Mode  :character   Median : 999.5   Median :2001-10-06 00:00:00.00  
+                    Mean   :1001.1   Mean   :2001-10-25 18:30:10.77  
+                    3rd Qu.:1500.2   3rd Qu.:2002-03-29 00:00:00.00  
+                    Max.   :2001.0   Max.   :2002-11-14 00:00:00.00  
+                                                                     
+   time_start                        time_end                     
+ Min.   :1899-12-30 00:00:00.00   Min.   :1899-12-30 00:00:00.00  
+ 1st Qu.:1899-12-30 07:15:00.00   1st Qu.:1899-12-30 07:30:00.00  
+ Median :1899-12-30 08:10:00.00   Median :1899-12-30 08:25:00.00  
+ Mean   :1899-12-30 08:19:33.82   Mean   :1899-12-30 08:34:00.42  
+ 3rd Qu.:1899-12-30 09:10:00.00   3rd Qu.:1899-12-30 09:25:00.00  
+ Max.   :1900-01-01 08:51:00.00   Max.   :1900-01-01 09:06:00.00  
+                                                                  
+   observer           wind_speed       wind_dir            air_temp     
+ Length:2004        Min.   : 0.000   Length:2004        Min.   : 30.00  
+ Class :character   1st Qu.: 0.000   Class :character   1st Qu.: 55.00  
+ Mode  :character   Median : 5.000   Mode  :character   Median : 70.00  
+                    Mean   : 4.064                      Mean   : 66.96  
+                    3rd Qu.: 5.000                      3rd Qu.: 80.00  
+                    Max.   :80.000                      Max.   :105.00  
+                    NA's   :198                         NA's   :22      
+ temp_units       cloud_cover        notes          
+ Mode :logical   Min.   :  0.00   Length:2004       
+ FALSE:2004      1st Qu.:  0.00   Class :character  
+                 Median :  0.00   Mode  :character  
+                 Mean   : 17.75                     
+                 3rd Qu.: 20.00                     
+                 Max.   :100.00                     
+                 NA's   :111                        </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>taxalist <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://portal.edirepository.org/nis/dataviewer?packageid=knb-lter-cap.256.10&amp;entityid=58f863b7e3066e68536a9cacdc7bd58e"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 259 Columns: 3
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (2): species_id, common_name
+dbl (1): asu_itis
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(taxalist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 259
+Columns: 3
+$ species_id  &lt;chr&gt; "ABTO", "AMCO", "AMGO", "AMKE", "AMPI", "AMRO", "AMWI", "A…
+$ common_name &lt;chr&gt; "Abert's Towhee", "American Coot", "American Goldfinch", "…
+$ asu_itis    &lt;dbl&gt; 208475, 142696, 207867, 122194, NA, 212184, 118948, 183554…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(taxalist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  species_id        common_name           asu_itis     
+ Length:259         Length:259         Min.   :118837  
+ Class :character   Class :character   1st Qu.:162615  
+ Mode  :character   Mode  :character   Median :187364  
+                                       Mean   :182781  
+                                       3rd Qu.:207298  
+                                       Max.   :266734  
+                                       NA's   :81      </code></pre>
+</div>
+</div>
+</section>
+<section id="what-are-the-primary-and-foreign-keys-for-the-tables-bird_observations-and-taxalist" class="level2">
+<h2 class="anchored" data-anchor-id="what-are-the-primary-and-foreign-keys-for-the-tables-bird_observations-and-taxalist">What are the primary and foreign keys for the tables bird_observations and taxalist?</h2>
+<section id="recall-that-a-primary-key-is-a-unique-identifier-for-each-observed-entity-one-per-row.-and-a-foreign-key-references-to-a-primary-key-in-another-table-linkage." class="level3">
+<h3 class="anchored" data-anchor-id="recall-that-a-primary-key-is-a-unique-identifier-for-each-observed-entity-one-per-row.-and-a-foreign-key-references-to-a-primary-key-in-another-table-linkage.">Recall that a <strong>primary key</strong> is a unique identifier for each observed entity, one per row. And a <strong>foreign key</strong> references to a primary key in another table (<strong>linkage</strong>).</h3>
+</section>
+<section id="hint-first-identify-the-primary-keys-for-all-the-tables-then-identify-the-foreign-keys." class="level3">
+<h3 class="anchored" data-anchor-id="hint-first-identify-the-primary-keys-for-all-the-tables-then-identify-the-foreign-keys."><strong>HINT</strong>: First identify the primary keys for all the tables, then identify the foreign keys.</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(bird_observations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 9
+  survey_id site_id species_id distance bird_count notes  seen heard direction
+      &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;    
+1       144 LI-S    HOSP       5-10              4 &lt;NA&gt;      1     1 NE       
+2       145 LI-W    HOSP       20-40            10 &lt;NA&gt;      0     1 E        
+3       145 LI-W    AUWA       20-40             2 &lt;NA&gt;      0     1 SE       
+4       145 LI-W    RODO       FT                2 &lt;NA&gt;      1     0 E        
+5       145 LI-W    GTGR       &gt;40               2 &lt;NA&gt;      0     1 NE       
+6       145 LI-W    WCSP       20-40             3 &lt;NA&gt;      0     1 N        </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(taxalist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 3
+  species_id common_name        asu_itis
+  &lt;chr&gt;      &lt;chr&gt;                 &lt;dbl&gt;
+1 ABTO       Abert's Towhee       208475
+2 AMCO       American Coot        142696
+3 AMGO       American Goldfinch   207867
+4 AMKE       American Kestrel     122194
+5 AMPI       American Pipit           NA
+6 AMRO       American Robin       212184</code></pre>
+</div>
+</div>
+</section>
+<section id="primary-keys-taxa-list-species-id-bird-observations-compound-key-made-up-of-survey-id-site-id-species-id" class="level3">
+<h3 class="anchored" data-anchor-id="primary-keys-taxa-list-species-id-bird-observations-compound-key-made-up-of-survey-id-site-id-species-id">Primary Keys: Taxa List = Species ID, Bird Observations = <strong><em>Compound Key</em></strong> made up of “Survey ID”, “Site ID”, &amp; “Species ID”</h3>
+</section>
+<section id="foreign-keys-taxa-list-na-bird-observations-species-id" class="level3">
+<h3 class="anchored" data-anchor-id="foreign-keys-taxa-list-na-bird-observations-species-id">Foreign Keys: Taxa List = NA, Bird Observations = Species ID</h3>
+</section>
+</section>
+<section id="write-code-to-create-a-subset-of-bird_observations-called-birds_subset-that-only-contains-observations-for-birds-with-species-id-bhco-and-rwbl-and-from-sites-with-site-id-li-w-and-nu-c." class="level2">
+<h2 class="anchored" data-anchor-id="write-code-to-create-a-subset-of-bird_observations-called-birds_subset-that-only-contains-observations-for-birds-with-species-id-bhco-and-rwbl-and-from-sites-with-site-id-li-w-and-nu-c.">Write code to create a subset of bird_observations called birds_subset that only contains observations for birds with species id BHCO and RWBL, and from sites with site ID LI-W and NU-C.</h2>
+<section id="hint-what-function-do-you-use-to-subset-data-by-rows" class="level3">
+<h3 class="anchored" data-anchor-id="hint-what-function-do-you-use-to-subset-data-by-rows"><strong>HINT</strong>: What function do you use to subset data by rows?</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># glimpse(bird_observations)</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co"># unique(bird_observations$species_id)</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co"># unique(bird_observations$site_id)</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>birds_subset <span class="ot">&lt;-</span> bird_observations <span class="sc">%&gt;%</span> </span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(species_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"BHCO"</span>, <span class="st">"RWBL"</span>),</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>         site_id <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"LI-W"</span>, <span class="st">"NU-C"</span>))</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(birds_subset<span class="sc">$</span>species_id) <span class="co">#looks good</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "BHCO" "RWBL"</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(birds_subset<span class="sc">$</span>site_id) <span class="co">#looks good</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "NU-C" "LI-W"</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="first-answer-what-do-you-expect-a-left_join-between-birds_subset-and-sites-to-contain-write-this-in-your-quarto-document-or-tell-a-neighbor." class="level2">
+<h2 class="anchored" data-anchor-id="first-answer-what-do-you-expect-a-left_join-between-birds_subset-and-sites-to-contain-write-this-in-your-quarto-document-or-tell-a-neighbor.">First, answer: what do you expect a <code>left_join()</code> between birds_subset and sites to contain? Write this in your Quarto Document or tell a neighbor.</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(birds_subset) <span class="co">#looking at column names, leading with left table...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "survey_id"  "site_id"    "species_id" "distance"   "bird_count"
+[6] "notes"      "seen"       "heard"      "direction" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(sites) <span class="co">#looking at column names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "site_id"        "park_code"      "park_district"  "park_name"     
+[5] "point_code"     "point_location" "park_acreage"  </code></pre>
+</div>
+</div>
+<section id="i-think-that-the-left_join-will-result-in-a-new-dataframe-w-15-columns-i.e.-join-based-on-site_id-column" class="level3">
+<h3 class="anchored" data-anchor-id="i-think-that-the-left_join-will-result-in-a-new-dataframe-w-15-columns-i.e.-join-based-on-site_id-column">I think that the <code>left_join()</code> will result in a new dataframe w/ 15 columns (i.e., join based on site_id column)</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># birds_left &lt;- birds_subset %&gt;% </span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="co">#   left_join(birds_subset, sites, by = "site_id") - my first attempt..., which was wrong. See below:</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>birds_left <span class="ot">&lt;-</span> birds_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">y =</span> sites, <span class="at">by =</span> <span class="st">"site_id"</span>)</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="co"># don't see x = birds_subset here because piping in birds_subset means it automatically assumes birds_subset as x.</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co"># # syntax without pipe</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="co"># birds_left &lt;- left_join(x = birds_subset, y = sites, by = "site_id")</span></span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(birds_left)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "survey_id"      "site_id"        "species_id"     "distance"      
+ [5] "bird_count"     "notes"          "seen"           "heard"         
+ [9] "direction"      "park_code"      "park_district"  "park_name"     
+[13] "point_code"     "point_location" "park_acreage"  </code></pre>
+</div>
+</div>
+</section>
+<section id="my-answer-was-correct---eureka" class="level3">
+<h3 class="anchored" data-anchor-id="my-answer-was-correct---eureka">my answer was <em>correct</em> - eureka!</h3>
+</section>
+</section>
+<section id="first-answer-what-do-you-expect-a-full_join-between-birds_subset-and-sites-to-contain-write-this-in-your-quarto-document-or-tell-a-neighbor." class="level2">
+<h2 class="anchored" data-anchor-id="first-answer-what-do-you-expect-a-full_join-between-birds_subset-and-sites-to-contain-write-this-in-your-quarto-document-or-tell-a-neighbor.">First, answer: what do you expect a <code>full_join()</code> between birds_subset and sites to contain? Write this in your Quarto Document or tell a neighbor.</h2>
+<section id="i-expect-that-a-full_join-will-do-the-same-thing-as-a-left_join" class="level3">
+<h3 class="anchored" data-anchor-id="i-expect-that-a-full_join-will-do-the-same-thing-as-a-left_join">I expect that a <code>full_join()</code> will do the same thing as a <code>left_join()</code></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(birds_subset) <span class="co">#looking at column names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "survey_id"  "site_id"    "species_id" "distance"   "bird_count"
+[6] "notes"      "seen"       "heard"      "direction" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(sites) <span class="co">#looking at column names</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "site_id"        "park_code"      "park_district"  "park_name"     
+[5] "point_code"     "point_location" "park_acreage"  </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>birds_full <span class="ot">&lt;-</span> birds_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(<span class="at">y =</span> sites, <span class="at">by =</span> <span class="st">"site_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="i-was-very-wrong-a-full_join-generated-a-data-frame-with-242-observations-still-15-variables-because-i-grouped-by-site_id-while-left_join-resulted-in-data-frame-with-only-23-observations" class="level3">
+<h3 class="anchored" data-anchor-id="i-was-very-wrong-a-full_join-generated-a-data-frame-with-242-observations-still-15-variables-because-i-grouped-by-site_id-while-left_join-resulted-in-data-frame-with-only-23-observations">I was very wrong… a <code>full_join()</code> generated a data frame with 242 observations (still 15 variables because I grouped by “site_id”) while <code>left_join()</code> resulted in data frame with only 23 observations</h3>
+</section>
+<section id="why-is-this-well-the-full_join-kept-all-the-information-from-sites-where-earlier-in-the-document-we-decided-to-filter-for-a-subset-of-sites" class="level3">
+<h3 class="anchored" data-anchor-id="why-is-this-well-the-full_join-kept-all-the-information-from-sites-where-earlier-in-the-document-we-decided-to-filter-for-a-subset-of-sites">Why is this? Well, the <code>full_join()</code> kept all the information from sites, where earlier in the document we decided to <code>filter()</code> for a subset of sites…</h3>
+</section>
+<section id="the-result-we-have-a-ton-of-nas-in-the-full_join-data-frame" class="level3">
+<h3 class="anchored" data-anchor-id="the-result-we-have-a-ton-of-nas-in-the-full_join-data-frame">The result? We have a ton of NAs in the <code>full_join()</code> data frame</h3>
+</section>
+</section>
+<section id="first-answer-what-do-you-expect-an-inner_join-between-birds_subset-and-taxalist-to-contain-write-this-in-your-quarto-document-or-tell-a-neighbor." class="level2">
+<h2 class="anchored" data-anchor-id="first-answer-what-do-you-expect-an-inner_join-between-birds_subset-and-taxalist-to-contain-write-this-in-your-quarto-document-or-tell-a-neighbor.">First, answer: what do you expect an <code>inner_join()</code> between birds_subset and taxalist to contain? Write this in your Quarto Document or tell a neighbor.</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(birds_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "survey_id"  "site_id"    "species_id" "distance"   "bird_count"
+[6] "notes"      "seen"       "heard"      "direction" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(taxalist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "species_id"  "common_name" "asu_itis"   </code></pre>
+</div>
+</div>
+<section id="using-inner_join-i-think-i-will-get-a-dataframe-with-one-column-species_id-since-it-returns-matched-x-rows" class="level3">
+<h3 class="anchored" data-anchor-id="using-inner_join-i-think-i-will-get-a-dataframe-with-one-column-species_id-since-it-returns-matched-x-rows">Using <code>inner_join()</code>, I think I will get a dataframe with one column: “species_id” since it returns matched x rows</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>birds_inner <span class="ot">&lt;-</span> birds_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(<span class="at">y =</span> taxalist, <span class="at">by =</span> <span class="st">"species_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="wrong-again-however-after-reading-the-correct-answer-it-makes-sensesee-below" class="level3">
+<h3 class="anchored" data-anchor-id="wrong-again-however-after-reading-the-correct-answer-it-makes-sensesee-below">Wrong again: however, after reading the correct answer, it makes sense…see below:</h3>
+</section>
+<section id="data-merge-together-based-on-species_id-and-since-there-is-only-bhco-and-rwbl-in-birds_subset-then-i-will-only-retain-data-related-to-those-two-species.-i-should-also-expect-to-see-the-columns-from-taxalist-common_name-and-asu_itis-to-be-merged-into-the-joined-table." class="level3">
+<h3 class="anchored" data-anchor-id="data-merge-together-based-on-species_id-and-since-there-is-only-bhco-and-rwbl-in-birds_subset-then-i-will-only-retain-data-related-to-those-two-species.-i-should-also-expect-to-see-the-columns-from-taxalist-common_name-and-asu_itis-to-be-merged-into-the-joined-table.">data merge together based on <strong>species_id</strong> and since there is only <em>BHCO</em> and <em>RWBL</em> in <strong>birds_subset</strong> then I will only retain data related to those two species. I should also expect to see the columns from <strong>taxalist</strong>: <em>common_name</em> and <em>asu_itis</em> to be merged into the joined table.</h3>
+</section>
+</section>
+<section id="what-would-you-get-if-instead-of-inner_join-youd-used-left_join-for-this-example-write-code-for-the-left-join-and-check." class="level2">
+<h2 class="anchored" data-anchor-id="what-would-you-get-if-instead-of-inner_join-youd-used-left_join-for-this-example-write-code-for-the-left-join-and-check.">What would you get if instead of <code>inner_join()</code> you’d used <code>left_join()</code> for this example? Write code for the left join and check.</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(birds_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "survey_id"  "site_id"    "species_id" "distance"   "bird_count"
+[6] "notes"      "seen"       "heard"      "direction" </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(taxalist)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "species_id"  "common_name" "asu_itis"   </code></pre>
+</div>
+</div>
+<section id="i-would-expect-that-we-would-see-a-data-frame-with-the-same-dimensions-i.e.-23-observations-of-11-variables-only-keeping-data-from-the-y-data-frame-taxalist-for-the-two-species-subsetted-in-the-birds_subset-dataframe-which-are-bhco-and-rwbl" class="level3">
+<h3 class="anchored" data-anchor-id="i-would-expect-that-we-would-see-a-data-frame-with-the-same-dimensions-i.e.-23-observations-of-11-variables-only-keeping-data-from-the-y-data-frame-taxalist-for-the-two-species-subsetted-in-the-birds_subset-dataframe-which-are-bhco-and-rwbl">I would expect that we would see a data frame with the same dimensions (i.e., 23 observations of 11 variables), only keeping data from the “y” data frame <strong>taxalist</strong> for the two species subsetted in the <strong>birds_subset</strong> dataframe which are <em>BHCO</em> and <em>RWBL</em></h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>birds_left_COMPARE <span class="ot">&lt;-</span> birds_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(<span class="at">y =</span> taxalist, <span class="at">by =</span> <span class="st">"species_id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="maybe-i-am-starting-to-figure-this-out-maybe-i-was-lucky.-i-was-correct-here" class="level3">
+<h3 class="anchored" data-anchor-id="maybe-i-am-starting-to-figure-this-out-maybe-i-was-lucky.-i-was-correct-here">Maybe I am starting to figure this out? Maybe I was lucky. I was correct here!</h3>
+</section>
+</section>
+<section id="why-does-that-make-sense-for-this-scenario-in-what-case-would-you-expect-the-outcome-to-differ-from-an-inner_join-write-this-in-your-quarto-document-or-tell-a-neighbor." class="level2">
+<h2 class="anchored" data-anchor-id="why-does-that-make-sense-for-this-scenario-in-what-case-would-you-expect-the-outcome-to-differ-from-an-inner_join-write-this-in-your-quarto-document-or-tell-a-neighbor.">Why does that make sense for this scenario? In what case would you expect the outcome to differ from an <code>inner_join()</code>? Write this in your Quarto Document or tell a neighbor.</h2>
+<section id="you-have-the-same-resulting-data-set-regardless-of-using-inner_join-or-left_join-to-merge-bird_subset-and-taxalist.-the-reasons-for-this-are" class="level3">
+<h3 class="anchored" data-anchor-id="you-have-the-same-resulting-data-set-regardless-of-using-inner_join-or-left_join-to-merge-bird_subset-and-taxalist.-the-reasons-for-this-are">You have the same resulting data set regardless of using inner_join() or left_join() to merge bird_subset and taxalist. The reasons for this are:</h3>
+<section id="inner_join-keeps-only-the-rows-observations-that-have-a-matching-key-across-both-data-sets---here-species_id-is-our-key-and-the-only-rows-that-match-across-both-data-sets-are-those-where-species_id-equals-bhco-or-rwbl" class="level4">
+<h4 class="anchored" data-anchor-id="inner_join-keeps-only-the-rows-observations-that-have-a-matching-key-across-both-data-sets---here-species_id-is-our-key-and-the-only-rows-that-match-across-both-data-sets-are-those-where-species_id-equals-bhco-or-rwbl"><code>inner_join()</code> keeps only the rows (observations) that have a matching key across both data sets - here, <strong>species_id</strong> is our key, and the only rows that match across both data sets are those where <strong>species_id</strong> equals <em>BHCO</em> or <em>RWBL</em></h4>
+</section>
+<section id="left_join-keeps-all-rows-from-the-left-table-in-our-case-the-left-table-is-birds_subset-and-merges-on-data-with-matching-keys-species_id-on-the-right-here-the-right-table-is-taxalist.-because-our-left-data-set-birds_subset-only-contains-species_ids-equal-to-bhco-or-rwbl-only-rows-with-those-species-will-be-kept-from-the-right-data-set-taxalist" class="level4">
+<h4 class="anchored" data-anchor-id="left_join-keeps-all-rows-from-the-left-table-in-our-case-the-left-table-is-birds_subset-and-merges-on-data-with-matching-keys-species_id-on-the-right-here-the-right-table-is-taxalist.-because-our-left-data-set-birds_subset-only-contains-species_ids-equal-to-bhco-or-rwbl-only-rows-with-those-species-will-be-kept-from-the-right-data-set-taxalist"><code>left_join()</code> keeps all rows from the left table (in our case, the left table is <strong>birds_subset</strong>) and merges on data with matching keys (<strong>species_id</strong>) on the right (here, the right table is <strong>taxalist</strong>). Because our left data set (birds_subset) only contains species_ids equal to <em>BHCO</em> or <em>RWBL</em>, only rows with those species will be kept from the right data set (<strong>taxalist</strong>)</h4>
+</section>
+</section>
+<section id="youd-expect-the-outcome-to-differ-from-an-inner_join-if-birds_subset-contained-an-observation-with-a-species_id-that-was-not-found-in-taxalist.-if-there-was-an-observation-of-a-species_id-in-birds_subset-that-was-not-in-taxalist-then-that-observation-would-be-kept-and-nas-would-be-assigned-to-the-common_name-and-asu_itis-columns-for-that-observations" class="level3">
+<h3 class="anchored" data-anchor-id="youd-expect-the-outcome-to-differ-from-an-inner_join-if-birds_subset-contained-an-observation-with-a-species_id-that-was-not-found-in-taxalist.-if-there-was-an-observation-of-a-species_id-in-birds_subset-that-was-not-in-taxalist-then-that-observation-would-be-kept-and-nas-would-be-assigned-to-the-common_name-and-asu_itis-columns-for-that-observations">You’d expect the outcome to differ from an <code>inner_join()</code> if <strong>birds_subset</strong> <strong><em>contained an observation with a species_id that was not found in taxalist</em></strong>. If there was an observation of a <strong>species_id</strong> in <strong>birds_subset</strong> that was <em>not in taxalist</em>, then that observation would be <strong>kept</strong>, and <strong>NAs</strong> would be assigned to the <strong>common_name</strong> and <strong>asu_itis</strong> columns for that observations</h3>
+</section>
+</section>
+</section>
+<section id="exercise-practice-wrangling-joining-data" class="level1">
+<h1>Exercise: Practice Wrangling &amp; Joining Data</h1>
+<section id="starting-with-your-object-bird_observations-rename-the-notes-column-to-bird_obs_notes-so-this-doesnt-conflict-with-notes-in-the-surveys-table." class="level2">
+<h2 class="anchored" data-anchor-id="starting-with-your-object-bird_observations-rename-the-notes-column-to-bird_obs_notes-so-this-doesnt-conflict-with-notes-in-the-surveys-table.">Starting with your object bird_observations, rename the notes column to bird_obs_notes (so this doesn’t conflict with notes in the surveys table).</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>bird_observations <span class="ot">&lt;-</span> bird_observations <span class="sc">%&gt;%</span> </span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">bird_obs_notes =</span> notes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="create-a-subset-that-contains-all-observations-in-the-birds_observations-data-frame" class="level2">
+<h2 class="anchored" data-anchor-id="create-a-subset-that-contains-all-observations-in-the-birds_observations-data-frame">Create a subset that contains all observations in the birds_observations data frame,</h2>
+</section>
+<section id="then-join-the-taxalist-sites-and-surveys-tables-to-it" class="level2">
+<h2 class="anchored" data-anchor-id="then-join-the-taxalist-sites-and-surveys-tables-to-it">then join the taxalist, sites and surveys tables to it,</h2>
+</section>
+<section id="and-finally-limit-to-only-columns-survey_date-common_name-park_name-bird_count-and-observer." class="level2">
+<h2 class="anchored" data-anchor-id="and-finally-limit-to-only-columns-survey_date-common_name-park_name-bird_count-and-observer.">and finally limit to only columns survey_date, common_name, park_name, bird_count, and observer.</h2>
+</section>
+<section id="hint-what-function-do-you-use-to-subset-data-by-columns---select" class="level2">
+<h2 class="anchored" data-anchor-id="hint-what-function-do-you-use-to-subset-data-by-columns---select"><strong>HINT</strong>: What function do you use to subset data by columns? -&gt; <code>select()</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>bird_obs_subset <span class="ot">&lt;-</span> bird_observations <span class="sc">%&gt;%</span> </span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(<span class="at">y =</span> taxalist, <span class="at">by =</span> <span class="st">"species_id"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(<span class="at">y =</span> sites, <span class="at">by =</span> <span class="st">"site_id"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(<span class="at">y =</span> surveys, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"site_id"</span>, <span class="st">"survey_id"</span>)) <span class="sc">%&gt;%</span>  </span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(survey_date, common_name, park_name, bird_count, observer)</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(bird_obs_subset)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 40,633
+Columns: 5
+$ survey_date &lt;dttm&gt; 2000-12-21, 2000-12-21, 2000-12-21, 2000-12-21, 2000-12-2…
+$ common_name &lt;chr&gt; "House Sparrow", "House Sparrow", "Audubon's Warbler", "Ro…
+$ park_name   &lt;chr&gt; "Lindo", "Lindo", "Lindo", "Lindo", "Lindo", "Lindo", "Lin…
+$ bird_count  &lt;dbl&gt; 4, 10, 2, 2, 2, 3, 3, 2, 2, 3, 1, 10, 3, 1, 6, 6, 20, 12, …
+$ observer    &lt;chr&gt; "B. Rambo", "B. Rambo", "B. Rambo", "B. Rambo", "B. Rambo"…</code></pre>
+</div>
+</div>
+</section>
+<section id="continuing-with-bird_obs_subset-first-use-unique-to-see-the-different-unique-values-in-the-column-observer.-how-many-observers-are-there-which-value-is-unlike-the-others" class="level2">
+<h2 class="anchored" data-anchor-id="continuing-with-bird_obs_subset-first-use-unique-to-see-the-different-unique-values-in-the-column-observer.-how-many-observers-are-there-which-value-is-unlike-the-others">Continuing with <strong>bird_obs_subset</strong>, first use <code>unique()</code> to see the different unique values in the column observer. How many observers are there? Which value is unlike the others?</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(bird_obs_subset<span class="sc">$</span>observer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "B. Rambo"   "J. Lemmer"  "D. Stuart"  "C. Putnam"  "S. Lerman" 
+[6] "Josh Burns" NA          </code></pre>
+</div>
+</div>
+<section id="we-see-that-josh-burns-sticks-out-as-well-as-na---there-are-6-observers-in-total-maybe-7-if-we-include-the-na" class="level3">
+<h3 class="anchored" data-anchor-id="we-see-that-josh-burns-sticks-out-as-well-as-na---there-are-6-observers-in-total-maybe-7-if-we-include-the-na">We see that <strong>Josh Burns</strong> sticks out, as well as <strong>NA</strong> - there are <strong>6</strong> observers in total, <em>maybe 7</em> if we include the <strong>NA</strong>?</h3>
+</section>
+</section>
+<section id="replace-josh-burns-with-a-format-that-matches-the-other-observer-names.-then-use-unique-again-to-check-your-work." class="level2">
+<h2 class="anchored" data-anchor-id="replace-josh-burns-with-a-format-that-matches-the-other-observer-names.-then-use-unique-again-to-check-your-work.">Replace “Josh Burns” with a format that matches the other observer names. Then use unique() again to check your work.</h2>
+</section>
+<section id="hint-what-function-do-you-use-when-you-are-making-a-change-to-an-entire-column---mutate" class="level2">
+<h2 class="anchored" data-anchor-id="hint-what-function-do-you-use-when-you-are-making-a-change-to-an-entire-column---mutate"><strong>HINT</strong>: What function do you use when you are making a change to an entire column? -&gt; <code>mutate()</code></h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>bird_obs_subset <span class="ot">&lt;-</span> bird_obs_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">observer =</span> <span class="fu">if_else</span>(<span class="at">condition =</span> observer <span class="sc">==</span> <span class="st">"Josh Burns"</span>, </span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">true =</span> <span class="st">"J. Burns"</span>, </span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">false =</span> observer))</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(bird_obs_subset<span class="sc">$</span>observer)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "B. Rambo"  "J. Lemmer" "D. Stuart" "C. Putnam" "S. Lerman" "J. Burns" 
+[7] NA         </code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="bonus-use-a-new-package-lubridate-to-wrangle-the-date-data-and-find-the-total-number-of-birds-by-park-and-month" class="level1">
+<h1>Bonus: Use a new package lubridate to wrangle the date data and find the total number of birds by park and month</h1>
+<section id="hint-how-do-you-learn-about-a-new-function-or-package---lubridate" class="level2">
+<h2 class="anchored" data-anchor-id="hint-how-do-you-learn-about-a-new-function-or-package---lubridate"><strong>HINT</strong>: How do you learn about a new function or package? -&gt; “?lubridate()”</h2>
+<section id="use-lubridatemonth-to-add-a-new-column-to-bird_obs_subset-called-survey_month-containing-only-the-month-number.-then-convert-the-month-number-to-a-factor-again-within-mutate." class="level3">
+<h3 class="anchored" data-anchor-id="use-lubridatemonth-to-add-a-new-column-to-bird_obs_subset-called-survey_month-containing-only-the-month-number.-then-convert-the-month-number-to-a-factor-again-within-mutate.">Use lubridate::month() to add a new column to bird_obs_subset called survey_month, containing only the month number. Then, convert the month number to a factor (again within mutate()).</h3>
+</section>
+<section id="use-dplyrrelocate-to-move-the-new-survey_month-column-to-immediately-after-the-survey_date-column.-you-can-do-this-in-a-separate-code-chunk-or-pipe-straight-into-it-from-your-existing-code." class="level3">
+<h3 class="anchored" data-anchor-id="use-dplyrrelocate-to-move-the-new-survey_month-column-to-immediately-after-the-survey_date-column.-you-can-do-this-in-a-separate-code-chunk-or-pipe-straight-into-it-from-your-existing-code.">Use dplyr::relocate() to move the new survey_month column to immediately after the survey_date column. You can do this in a separate code chunk, or pipe straight into it from your existing code.</h3>
+</section>
+<section id="filter-to-only-include-parks-lindo-orme-palomino-and-sonrisa." class="level3">
+<h3 class="anchored" data-anchor-id="filter-to-only-include-parks-lindo-orme-palomino-and-sonrisa.">Filter to only include parks Lindo, Orme, Palomino, and Sonrisa.</h3>
+</section>
+<section id="find-the-total-number-of-birds-observed-by-park-and-month-hint-you-can-use-group_by-and-summarize." class="level3">
+<h3 class="anchored" data-anchor-id="find-the-total-number-of-birds-observed-by-park-and-month-hint-you-can-use-group_by-and-summarize.">Find the total number of birds observed by park and month (Hint: You can use group_by() and summarize()).</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>bird_obs_subset <span class="ot">&lt;-</span> bird_obs_subset <span class="sc">%&gt;%</span> </span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">survey_month =</span> lubridate<span class="sc">::</span><span class="fu">month</span>(survey_date)) <span class="sc">%&gt;%</span>  <span class="co">#gives us new month column as number</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">survey_month =</span> <span class="fu">as.factor</span>(survey_month)) <span class="sc">%&gt;%</span> <span class="co"># converts month as number to factor</span></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">relocate</span>(survey_month, <span class="at">.after =</span> survey_date) <span class="sc">%&gt;%</span> <span class="co"># moves within data fram</span></span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(park_name <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Lindo"</span>, <span class="st">"Orme"</span>, <span class="st">"Palomino"</span>, <span class="st">"Sonrisa"</span>)) <span class="sc">%&gt;%</span> <span class="co"># includes only subset of parks</span></span>
+<span id="cb69-6"><a href="#cb69-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(park_name, survey_month) <span class="sc">%&gt;%</span>  <span class="co"># grouping by park and month</span></span>
+<span id="cb69-7"><a href="#cb69-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">tot_bird_count_month =</span> <span class="fu">n</span>()) <span class="co"># to calculate the # of birds observed</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`summarise()` has grouped output by 'park_name'. You can override using the
+`.groups` argument.</code></pre>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
