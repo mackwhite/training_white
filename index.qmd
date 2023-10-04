@@ -9,7 +9,7 @@ Hello World
 ## Course Lessons
 - [Intro to literate analysis](docs/literate-analysis.html)
 - Cleaning and wrangling data
-- Data viz
+- [Data viz](docs/data-viz.html)
 - Functions and packages
 
 ## Practice Sesssions
