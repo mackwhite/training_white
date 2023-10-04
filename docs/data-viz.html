@@ -107,6 +107,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <script src="data-viz_files/libs/dt-core-1.12.1/js/jquery.dataTables.min.js"></script>
 <link href="data-viz_files/libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet">
 <script src="data-viz_files/libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="data-viz_files/libs/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+<script src="data-viz_files/libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="data-viz_files/libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
+<script src="data-viz_files/libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="data-viz_files/libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="data-viz_files/libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="data-viz_files/libs/leaflet-binding-2.1.1/leaflet.js"></script>
 
 
 </head>
@@ -442,11 +449,83 @@ using the `.groups` argument.</code></pre>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">datatable</span>(locations)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 
-<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-d9c2e1c679fe7aefc6d7" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-d9c2e1c679fe7aefc6d7">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10"],["Decker Island","SW Suisun Marsh","Grizzly Bay","Prospect","SJ River","Wildlands","North Delta","Honker Bay/Chipps Island","Twitchell Island","Sherman Island"],[38.105872,38.192684,38.11572,38.213087,38.053097,38.316412,38.184603,38.109048,38.096002,38.034339],[-121.70638,-121.912312,-122.030558,-121.667419,-121.842422,-121.693077,-121.661433,-121.708086,-121.674498,-121.761946]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>restore_loc<\/th>\n      <th>latitude<\/th>\n      <th>longitude<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-30cc03d09e97b3d686ca" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-30cc03d09e97b3d686ca">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4","5","6","7","8","9","10"],["Decker Island","SW Suisun Marsh","Grizzly Bay","Prospect","SJ River","Wildlands","North Delta","Honker Bay/Chipps Island","Twitchell Island","Sherman Island"],[38.105872,38.192684,38.11572,38.213087,38.053097,38.316412,38.184603,38.109048,38.096002,38.034339],[-121.70638,-121.912312,-122.030558,-121.667419,-121.842422,-121.693077,-121.661433,-121.708086,-121.674498,-121.761946]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>restore_loc<\/th>\n      <th>latitude<\/th>\n      <th>longitude<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"className":"dt-right","targets":[2,3]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 </section>
+<section id="leaflet-package-for-interactive-maps" class="level3">
+<h3 class="anchored" data-anchor-id="leaflet-package-for-interactive-maps"><code>leaflet</code> Package for interactive maps</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leaflet</span>(locations) <span class="sc">%&gt;%</span> <span class="co">#calling dataset</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addTiles</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">addMarkers</span>(<span class="at">lng =</span> <span class="sc">~</span>longitude, </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">lat =</span> <span class="sc">~</span>latitude,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">popup =</span> <span class="sc">~</span>restore_loc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-af0cb3010096827f3957" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-af0cb3010096827f3957">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,null,{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"https://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addMarkers","args":[[38.105872,38.192684,38.11572,38.213087,38.053097,38.316412,38.184603,38.109048,38.096002,38.034339],[-121.70638,-121.912312,-122.030558,-121.667419,-121.842422,-121.693077,-121.661433,-121.708086,-121.674498,-121.761946],null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},["Decker Island","SW Suisun Marsh","Grizzly Bay","Prospect","SJ River","Wildlands","North Delta","Honker Bay/Chipps Island","Twitchell Island","Sherman Island"],null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[38.034339,38.316412],"lng":[-122.030558,-121.661433]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+<section id="advanced-interactive-map" class="level3">
+<h3 class="anchored" data-anchor-id="advanced-interactive-map">Advanced Interactive Map</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leaflet</span>(locations) <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addWMSTiles</span>(</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WmsServer"</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">layers =</span> <span class="st">"0"</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">options =</span> <span class="fu">WMSTileOptions</span>(<span class="at">format =</span> <span class="st">"image/png"</span>, <span class="at">transparent =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">lng =</span> <span class="sc">~</span> longitude,</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">lat =</span> <span class="sc">~</span> latitude,</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">popup =</span> <span class="sc">~</span> restore_loc,</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">radius =</span> <span class="dv">5</span>,</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>        <span class="co"># set fill properties</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">fillColor =</span> <span class="st">"salmon"</span>,</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">fillOpacity =</span> <span class="dv">1</span>,</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># set stroke properties</span></span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">stroke =</span> T,</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">weight =</span> <span class="fl">0.5</span>,</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">color =</span> <span class="st">"white"</span>,</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">opacity =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-8a0077448ee57f424ccf" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-8a0077448ee57f424ccf">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addWMSTiles","args":["https://basemap.nationalmap.gov/arcgis/services/USGSTopo/MapServer/WmsServer",null,null,{"styles":"","format":"image/png","transparent":true,"version":"1.1.1","layers":"0"}]},{"method":"addCircleMarkers","args":[[38.105872,38.192684,38.11572,38.213087,38.053097,38.316412,38.184603,38.109048,38.096002,38.034339],[-121.70638,-121.912312,-122.030558,-121.667419,-121.842422,-121.693077,-121.661433,-121.708086,-121.674498,-121.761946],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"white","weight":0.5,"opacity":1,"fill":true,"fillColor":"salmon","fillOpacity":1},null,null,["Decker Island","SW Suisun Marsh","Grizzly Bay","Prospect","SJ River","Wildlands","North Delta","Honker Bay/Chipps Island","Twitchell Island","Sherman Island"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[38.034339,38.316412],"lng":[-122.030558,-121.661433]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+</section>
+</section>
+<section id="another-leaflet-example" class="level2">
+<h2 class="anchored" data-anchor-id="another-leaflet-example">Another Leaflet Example!</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">leaflet</span>(locations) <span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addWMSTiles</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>        <span class="st">"https://basemap.nationalmap.gov/arcgis/services/USGSImageryTopo/MapServer/WmsServer"</span>,</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">layers =</span> <span class="st">"0"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">options =</span> <span class="fu">WMSTileOptions</span>(<span class="at">format =</span> <span class="st">"image/png"</span>, <span class="at">transparent =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addWMSTiles</span>(</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"https://basemap.nationalmap.gov/arcgis/services/USGSHydroCached/MapServer/WmsServer"</span>,</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">layers =</span> <span class="st">"0"</span>,</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">options =</span> <span class="fu">WMSTileOptions</span>(<span class="at">format =</span> <span class="st">"image/png"</span>, <span class="at">transparent =</span> <span class="cn">TRUE</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addCircleMarkers</span>(</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">lng =</span> <span class="sc">~</span> longitude,</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">lat =</span> <span class="sc">~</span> latitude,</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">popup =</span> <span class="sc">~</span> restore_loc,</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">radius =</span> <span class="dv">5</span>,</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># set fill properties</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">fillColor =</span> <span class="st">"salmon"</span>,</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">fillOpacity =</span> <span class="dv">1</span>,</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># set stroke properties</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">stroke =</span> T,</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">weight =</span> <span class="fl">0.5</span>,</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">color =</span> <span class="st">"white"</span>,</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">opacity =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="leaflet html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-a39ff24e73e50ac68ed1" style="width:100%;height:464px;"></div>
+<script type="application/json" data-for="htmlwidget-a39ff24e73e50ac68ed1">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addWMSTiles","args":["https://basemap.nationalmap.gov/arcgis/services/USGSImageryTopo/MapServer/WmsServer",null,null,{"styles":"","format":"image/png","transparent":true,"version":"1.1.1","layers":"0"}]},{"method":"addWMSTiles","args":["https://basemap.nationalmap.gov/arcgis/services/USGSHydroCached/MapServer/WmsServer",null,null,{"styles":"","format":"image/png","transparent":true,"version":"1.1.1","layers":"0"}]},{"method":"addCircleMarkers","args":[[38.105872,38.192684,38.11572,38.213087,38.053097,38.316412,38.184603,38.109048,38.096002,38.034339],[-121.70638,-121.912312,-122.030558,-121.667419,-121.842422,-121.693077,-121.661433,-121.708086,-121.674498,-121.761946],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"white","weight":0.5,"opacity":1,"fill":true,"fillColor":"salmon","fillOpacity":1},null,null,["Decker Island","SW Suisun Marsh","Grizzly Bay","Prospect","SJ River","Wildlands","North Delta","Honker Bay/Chipps Island","Twitchell Island","Sherman Island"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[38.034339,38.316412],"lng":[-122.030558,-121.661433]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
 </section>
 
 </main>
