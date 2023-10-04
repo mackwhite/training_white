@@ -5,3 +5,14 @@ format: html
 ---
 
 Hello World
+
+## Course Lessons
+- [Intro to literate analysis](docs/literate-analysis.html)
+- Cleaning and wrangling data
+- Data viz
+- Functions and packages
+
+## Practice Sesssions
+- Joins, cleaning, and wrangling
+- Data viz and publish to web
+- Writing functions and making packages
