@@ -1,0 +1,81 @@
+---
+title: "Functions and Packages"
+author: "Mack White"
+format: html
+---
+
+```{r}
+source("../R/fahr_to_celsius.R") #sources functions, but if have a ton of personalized functions maybe better to create package
+```
+
+
+```{r}
+airtemps <- c(212, 30.3, 78, 32)
+```
+
+## Lets make a function to convert F to C
+```{r}
+fahr_to_celsius <- function(fahr) {
+  
+  celsisus <- (fahr - 32) * 5/9
+  return(celsisus)
+  
+}
+```
+
+```{r}
+# using fahr_to_celsius function w airtemps
+
+fahr_to_celsius(airtemps[1]) #indexing to first value
+airtemp_f <- fahr_to_celsius(airtemps) #returns all values converted from F to C
+
+```
+
+## Reversing from F to C
+```{r}
+celsius_to_fahr <- function(celsius) {
+  
+  fahr <- (celsius * 9/5) + 32
+  return(fahr)
+  
+}
+```
+
+```{r}
+airtemp_c <- celsius_to_fahr(airtemp_f)
+```
+
+## GGPLOT Theme Functions - EXAMPLE
+```{r}
+custom_theme <- function(base_size = 9) {
+    ggplot2::theme(
+      text             = ggplot2::element_text(family = 'Helvetica', 
+                                               color = 'gray30', 
+                                               size = base_size),
+      plot.title       = ggplot2::element_text(size = ggplot2::rel(1.25), 
+                                               hjust = 0.5, 
+                                               face = 'bold'),
+      panel.background = ggplot2::element_blank(),
+      panel.border     = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major = ggplot2::element_line(colour = 'grey90', 
+                                               linewidth = 0.25),
+      legend.position  = 'right',
+      legend.key       = ggplot2::element_rect(colour = NA, 
+                                               fill = NA),
+      axis.ticks       = ggplot2::element_blank(),
+      axis.line        = ggplot2::element_blank()
+      )
+}
+
+library(ggplot2)
+
+ggplot(temps_df, mapping = aes(x = fahr, y = celsius, color = kelvin)) +
+    geom_point() +
+    custom_theme(10)
+```
+
+```{r}
+fahr_to_celsius()
+```
+
