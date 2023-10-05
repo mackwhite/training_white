@@ -1,0 +1,6 @@
+---
+title: "R Practice: Functions"
+author: "Mack White"
+format: html
+---
+
