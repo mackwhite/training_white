@@ -4,3 +4,123 @@ author: "Mack White"
 format: html
 ---
 
+## R Functions Warm Up
+
+### Create a function called `double_it()` that doubles any value input value. Then try out the function, are the values returned what you expect?
+```{r}
+double_it <- function(value) {
+  
+  doubled_value <- (value * 2)
+  return(doubled_value)
+}
+
+abundance <- c(120, 60, 30, 15, 7.5) # create vector to test function
+
+abundance_doubled <- double_it(abundance)
+```
+
+### Write a function called `exclaim_age()` that returns the statement “I am ___ years old!”, where the blank is entered by the user as argument age.
+#####Then try out the function, are the values returned what you expect?
+
+```{r}
+exclaim_age <- function(age){
+  
+  print(paste("I am", age, "years old!"))
+  
+}
+
+exclaim_age(age = 12)
+```
+
+## Functions with Values
+
+### Run the function with some values. Is it running how you expect?
+```{r}
+# "find_max() function" #
+find_max <- function(value_1, value_2) {
+    
+    if (value_1 > value_2) {
+        return(value_1)
+    }
+    else if (value_2 > value_1) {
+        return(value_2)
+    }
+}
+
+find_max(10, 12)
+# it is running how I would expect since 12 is greater than 10
+```
+
+### Run the function again, but this time use the function in an arithmetic expression. Is the output what you expect?
+
+```{r}
+find_max(10*100, 10*101)
+# it is still running how I would expect it
+
+# also example using `find_max()` in an arithmetic expression
+# we expect the answer to be 20
+5 * find_max(4, 2)
+```
+
+## Adding Error or Warning Messages
+
+### Let’s continue to test the `find_max()` function and make sure it runs appropriately in the following function calls in Questions 4a, 4b, and 4c.
+
+### Run `find_max(4, 2, 5)` in the Console. What happens? What kind of message appears? Is it sufficient? If not, consider adding a warning or error message using `warning()` or `stop()`. Remember, use `?function` to access the Help page. Add additional logic to the function, as needed.
+
+### **returns following**: *Error in find_max(4, 2, 5) : unused argument (5)*
+### This is an error message that is automatically created by R since our function only requires two parameters. This is a sufficient error message.
+
+### Run `find_max(4, 4)` in the Console. What happens? What kind of message appears? Is it sufficient? If not, consider adding a warning or error message using `warning()` or `stop()`. Remember, use `?function` to access the Help page. Add additional logic to the function, as needed.
+
+### **doesn't run***
+
+### To account for this scenario, add an `if()` statement to the beginning of the function, and then use either `warning()` or `stop()`.
+
+```{r}
+find_max <- function(value_1, value_2) {
+    
+    if (value_1 == value_2) {
+      return(stop("values are the same"))
+    }
+    if (value_1 > value_2) {
+        return(value_1)
+    }
+    else if (value_2 > value_1) {
+        return(value_2)
+    }
+}
+
+find_max(4, 4)
+# stop() message worked: returns "Error in find_max(4, 4) : values are the same"
+```
+
+### Run `find_max(4, "cow")` in the Console. What happens? What kind of message appears? Is it sufficient? If not, consider adding a warning or error message using `warning()` or `stop()`. Remember, use `?function` to access the Help page. Add additional logic to the function, as needed.
+
+### it returns cow! 
+
+```{r}
+# `find_max()` function with error messages and checks
+find_max <- function(value_1, value_2) {
+    
+    if (is.numeric(value_1) != TRUE | is.numeric(value_2) != TRUE) {
+        stop("Value must be a numeric type.")
+    }
+    
+    if (value_1 == value_2) {
+        stop("Values must be different from each other.")
+    }
+    
+    if (value_1 > value_2) {
+        return(value_1)
+    }
+    else if (value_2 > value_1) {
+        return(value_2)
+    }
+}
+
+find_max(4, "cow")
+find_max("cow", 4)
+
+# works!
+```
